@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "cloth-config-extensions",
+	"version": "${version}",
+	"name": "Cloth Config Extensions",
+	"description": "Useful Cloth Config library extensions to reduce code boilerplate and improve config quality",
+	"authors": [
+		"Mikołaj Pokora (Miki-Liki)"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/cloth-config-extensions",
+		"sources": "https://github.com/MikiP98/ClothConfigExtensions",
+		"issues": "https://github.com/MikiP98/ClothConfigExtensions/issues"
+	},
+	"license": "BSL-to-AGPL-with-custom-exceptions",
+	"icon": "assets/cloth-config-extensions/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.mikip98.clothconfigextensions.ClothConfigExtensions"
+		],
+		"client": [
+			"io.mikip98.clothconfigextensions.client.ClothConfigExtensionsClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~${minecraft_version}",
+		"java": ">=${java_version}",
+		"fabric-api": "*",
+		"cloth-config": "*"
+	}
+}
