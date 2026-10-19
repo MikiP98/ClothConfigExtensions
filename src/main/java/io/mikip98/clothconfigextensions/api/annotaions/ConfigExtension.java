@@ -1,4 +1,4 @@
-package io.mikip98.clothconfigextensions.annotaions;
+package io.mikip98.clothconfigextensions.api.annotaions;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -40,5 +40,26 @@ public class ConfigExtension {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.FIELD)
         public @interface SkipGlobalTooltip {}
+    }
+
+    public static class File {
+        private File() {}
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.FIELD)
+        public @interface Comment {
+            String comment();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target({ElementType.FIELD, ElementType.TYPE})
+        public @interface AutoComment {
+            String langFile() default "en_us";
+            String translationsString() default "";
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target({ElementType.FIELD, ElementType.TYPE})
+        public @interface SkipComment {}
     }
 }

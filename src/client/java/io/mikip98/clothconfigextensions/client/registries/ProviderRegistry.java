@@ -1,6 +1,6 @@
 package io.mikip98.clothconfigextensions.client.registries;
 
-import io.mikip98.clothconfigextensions.annotaions.ConfigExtension;
+import io.mikip98.clothconfigextensions.api.annotaions.ConfigExtension;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.gui.registry.GuiRegistry;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
