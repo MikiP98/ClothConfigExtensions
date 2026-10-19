@@ -2,6 +2,8 @@ plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}" apply false
 	id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
 	id 'maven-publish'
+
+    id 'systems.manifold.manifold-gradle-plugin' version "${manifold_plugin_version}"
 }
 
 // Load version-specific properties
@@ -26,6 +28,9 @@ if (activeMcVersionNum < 260000) {
 
 version = "${project.version}+${project.minecraft_version}"
 
+// Auto-generate build.properties so the Manifold IDE plugin and compiler stay in sync
+file("build.properties").text = "MC_VERSION=${project.ext.mc_version_number}\n"
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -35,6 +40,9 @@ repositories {
 
 	// cloth-config
 	maven { url "https://maven.shedaniel.me/" }
+
+	// Night Config
+	mavenCentral()
 }
 
 loom {
@@ -49,6 +57,13 @@ loom {
 }
 
 dependencies {
+    // Manifold preprocessor
+    annotationProcessor "systems.manifold:manifold-preprocessor:${project.manifold_version}"
+    compileOnly "systems.manifold:manifold-preprocessor:${project.manifold_version}"
+
+	// Night Config
+	implementation include("com.electronwill.night-config:toml:${project.night_config_version}")
+
 	def loomGradle = activeMcVersionNum < 260000
 	String implementationEntry = loomGradle ? "modImplementation" : "implementation"
 //	String apiEntry			   = loomGradle ? "modApi"            : "api"
