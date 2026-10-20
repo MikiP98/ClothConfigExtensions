@@ -47,11 +47,25 @@ repositories {
 
 loom {
 	splitEnvironmentSourceSets()
+}
 
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "cloth-config-extensions-test"
+		enableGameTests = true
+		eula = true
+	}
+}
+
+loom {
 	mods {
 		"cloth-config-extensions" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
+		}
+		"cloth-config-extensions-test" {
+			sourceSet sourceSets.gametest
 		}
 	}
 }
