@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
@@ -103,20 +105,23 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
                 final ConfigExtension.File.AutoComment autoComment = tryGetAnnotation(field, ConfigExtension.File.AutoComment.class);
                 if (autoComment != null) {
                     final JsonObject langData = getLangData(autoComment.langFile());
-                    java.lang.reflect.Type genericType = field.getGenericType();
+                    Type genericType = field.getGenericType();
 
-                    if (genericType instanceof java.lang.reflect.ParameterizedType pType &&
+                    if (
+                            genericType instanceof ParameterizedType pType &&
                             pType.getActualTypeArguments()[0] instanceof Class<?> keyClass &&
-                            keyClass.isEnum()) {
+                            keyClass.isEnum()
+                    ) {
 
                         for (Object enumObj : keyClass.getEnumConstants()) {
                             Enum<?> enumVal = (Enum<?>) enumObj;  // TODO: Switch from enum to generic, or add boolean support
                             List<String> keyPath = new ArrayList<>(currentPath);
                             keyPath.add(enumVal.name()); // TOML uses the raw enum name
+                            // TODO: How will it add the tooltips to the keys instead of the main map?
 
                             // Replicate the exact baseKey from ProviderRegistry
                             String customBaseKey = "text.autoconfig." + this.definition.name() + ".option." +
-                                    String.join(".", currentPath) + "." + enumVal.name().toLowerCase(); //  TODO: This does mot match the correct path
+                                    String.join(".", currentPath) + "." + enumVal.name().toLowerCase();
 
                             String resolved = resolveCommentFromLangFile(field, keyPath, langData, customBaseKey);
                             if (!resolved.isEmpty()) {
