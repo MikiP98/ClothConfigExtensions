@@ -5,6 +5,8 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.gui.registry.GuiRegistry;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.impl.builders.BooleanToggleBuilder;
+import me.shedaniel.clothconfig2.impl.builders.EnumSelectorBuilder;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -21,6 +23,7 @@ public class ProviderRegistry {
     @ApiStatus.Internal
     public static void registerCustomProviders(GuiRegistry registry) {
         registerEnumBooleanMapProvider(registry);
+        registerEnumEnumMapProvider(registry);
         registerFloatRangeStringFieldProvider(registry);
         registerIntRangeStringFieldProvider(registry);
     }
@@ -47,7 +50,7 @@ public class ProviderRegistry {
 
                             boolean defaultValue = defaultMap == null || !defaultMap.containsKey(enumValue) || defaultMap.get(enumValue);
 
-                            var toggleBuilder = builder.startBooleanToggle(
+                            BooleanToggleBuilder toggleBuilder = builder.startBooleanToggle(
                                             Component.translatable(translationKey),
                                             map.getOrDefault(enumValue, true)
                                     )
@@ -81,7 +84,59 @@ public class ProviderRegistry {
         );
     }
 
-    // TODO: Consider replacing the two below with one that checks for field type
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected static void registerEnumEnumMapProvider(GuiRegistry registry) {
+        registry.registerPredicateProvider(
+                (i13n, field, config, defaults, guiProvider) -> {
+                    ConfigEntryBuilder builder = ConfigEntryBuilder.create();
+                    List<AbstractConfigListEntry<?>> entries = new ArrayList<>();
+                    try {
+                        ParameterizedType pType = (ParameterizedType) field.getGenericType();
+                        Class keyEnumClass = (Class) pType.getActualTypeArguments()[0];
+                        Class valueEnumClass = (Class) pType.getActualTypeArguments()[1];
+
+                        Map map = (Map) field.get(config);
+                        Map defaultMap = (Map) field.get(defaults);
+
+                        for (Object keyObj : keyEnumClass.getEnumConstants()) {
+                            Enum keyEnum = (Enum) keyObj;
+                            String translationKey = i13n + "." + keyEnum.name().toLowerCase();
+                            Enum defaultValue = (defaultMap != null && defaultMap.containsKey(keyEnum))
+                                    ? (Enum) defaultMap.get(keyEnum) : (Enum) valueEnumClass.getEnumConstants()[0];
+                            Enum currentValue = (Enum) map.getOrDefault(keyEnum, defaultValue);
+
+                            EnumSelectorBuilder enumBuilder = builder.startEnumSelector(
+                                            Component.translatable(translationKey),
+                                            valueEnumClass,
+                                            currentValue
+                                    )
+                                    .setDefaultValue(defaultValue)
+                                    .setSaveConsumer(newValue -> map.put(keyEnum, newValue));
+
+                            if (field.isAnnotationPresent(ConfigEntry.Gui.Tooltip.class) || Util.getGlobalTooltip(field) != null) {
+                                enumBuilder.setTooltip(Component.translatable(translationKey + ".@Tooltip"));
+                            }
+                            entries.add(enumBuilder.build());
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("Error: {};\nStacktrace: {}", e, e.getStackTrace());
+                    }
+                    return (List<AbstractConfigListEntry>) (Object) entries;
+                },
+                field -> {
+                    if (Map.class.isAssignableFrom(field.getType()) && field.getGenericType() instanceof ParameterizedType pType) {
+                        Type[] typeArgs = pType.getActualTypeArguments();
+                        if (typeArgs.length == 2) {
+                            return typeArgs[0] instanceof Class<?> c1 && c1.isEnum() &&
+                                    typeArgs[1] instanceof Class<?> c2 && c2.isEnum();
+                        }
+                    }
+                    return false;
+                }
+        );
+    }
+
+    // TODO: Consider replacing the two below with one that checks for field type?
 
     protected static void registerFloatRangeStringFieldProvider(GuiRegistry registry) {
         registry.registerAnnotationProvider(
