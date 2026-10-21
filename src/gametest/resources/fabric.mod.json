@@ -1,0 +1,20 @@
+{
+	"schemaVersion": 1,
+	"id": "cloth-config-extensions-test",
+	"version": "1.0.0",
+	"name": "Cloth Config Extensions - Tests",
+	"environment": "*",
+	"depends": {},
+	"entrypoints": {
+		"main": [
+			"io.mikip98.clothconfigextensions.ClothConfigExtensionsTests"
+		],
+		"client": [
+			"io.mikip98.clothconfigextensions.ClothConfigExtensionsTests"
+		],
+		"fabric-gametest": [],
+		"modmenu": [
+			"io.mikip98.clothconfigextensions.test_config.ModMenuIntegration"
+		]
+	}
+}

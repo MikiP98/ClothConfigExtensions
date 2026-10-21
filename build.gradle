@@ -40,6 +40,8 @@ repositories {
 
 	// cloth-config
 	maven { url "https://maven.shedaniel.me/" }
+	// Mod Menu
+	maven { url "https://maven.terraformersmc.com/releases/" }
 
 	// Night Config
 	mavenCentral()
@@ -81,8 +83,8 @@ dependencies {
 	def loomGradle = activeMcVersionNum < 260000
 	String implementationEntry = loomGradle ? "modImplementation" : "implementation"
 //	String apiEntry			   = loomGradle ? "modApi"            : "api"
-//	String compileOnlyEntry    = loomGradle ? "modCompileOnly"    : "compileOnly"
-//	String runtimeOnlyEntry    = loomGradle ? "modRuntimeOnly"    : "runtimeOnly"
+	String compileOnlyEntry    = loomGradle ? "modCompileOnly"    : "compileOnly"
+	String runtimeOnlyEntry    = loomGradle ? "modRuntimeOnly"    : "runtimeOnly"
 
 	// Minecraft base dependencies
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -98,6 +100,8 @@ dependencies {
 	add(implementationEntry, "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+	add(compileOnlyEntry, "com.terraformersmc:modmenu:${project.modmenu_version}")
+	add(runtimeOnlyEntry, "com.terraformersmc:modmenu:${project.modmenu_version}")
 }
 
 processResources {
