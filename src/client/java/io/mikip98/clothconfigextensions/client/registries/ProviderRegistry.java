@@ -141,7 +141,7 @@ public class ProviderRegistry {
     protected static void registerFloatRangeStringFieldProvider(GuiRegistry registry) {
         registry.registerAnnotationProvider(
                 (i13n, field, config, defaults, guiProvider) -> {
-                    ConfigExtension.Gui.FloatRange bounds = field.getAnnotation(ConfigExtension.Gui.FloatRange.class);
+                    ConfigExtension.Gui.FloatLimit bounds = field.getAnnotation(ConfigExtension.Gui.FloatLimit.class);
                     float min = bounds.min();
                     float max = bounds.max();
 
@@ -170,14 +170,14 @@ public class ProviderRegistry {
                     }
                 },
                 field -> field.getType() == float.class,
-                ConfigExtension.Gui.FloatRange.class
+                ConfigExtension.Gui.FloatLimit.class
         );
     }
 
     protected static void registerIntRangeStringFieldProvider(GuiRegistry registry) {
         registry.registerAnnotationProvider(
                 (i13n, field, config, defaults, guiProvider) -> {
-                    ConfigExtension.Gui.IntRange bounds = field.getAnnotation(ConfigExtension.Gui.IntRange.class);
+                    ConfigExtension.Gui.IntLimit bounds = field.getAnnotation(ConfigExtension.Gui.IntLimit.class);
                     int min = bounds.min();
                     int max = bounds.max();
 
@@ -206,7 +206,7 @@ public class ProviderRegistry {
                     }
                 },
                 field -> field.getType() == int.class,
-                ConfigExtension.Gui.IntRange.class
+                ConfigExtension.Gui.IntLimit.class
         );
     }
 }

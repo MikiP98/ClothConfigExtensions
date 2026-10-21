@@ -11,9 +11,17 @@ public class ConfigExtension {
     public static class Gui {
         private Gui() {}
 
+        // TODO: Register
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.FIELD)
-        public @interface FloatRange {
+        public @interface DoubleLimit {
+            double min() default -Double.MAX_VALUE;
+            double max() default Double.MAX_VALUE;
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.FIELD)
+        public @interface FloatLimit {
             float min() default -Float.MAX_VALUE;
             float max() default Float.MAX_VALUE;
         }
@@ -29,9 +37,17 @@ public class ConfigExtension {
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.FIELD)
-        public @interface IntRange {
+        public @interface IntLimit {
             int min() default Integer.MIN_VALUE;
             int max() default Integer.MAX_VALUE;
+        }
+
+        // TODO: Register
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.FIELD)
+        public @interface LongLimit {
+            long min() default Long.MIN_VALUE;
+            long max() default Long.MAX_VALUE;
         }
 
         /**
