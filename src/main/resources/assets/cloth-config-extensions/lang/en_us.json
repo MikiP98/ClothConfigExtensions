@@ -1,0 +1,6 @@
+{
+	"text.autoconfig.TestConfig.title": "This is a test config screen",
+
+	"text.autoconfig.TestConfig.option.testIntLimited": "Test Int Limited",
+	"text.autoconfig.TestConfig.option.enable.@Tooltip": "Tooltip for Test Int Limited"
+}
