@@ -11,6 +11,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import me.shedaniel.autoconfig.util.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +55,7 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
     }
 
     protected Map<String, JsonObject> langDataCache;
-    protected JsonObject getLangData(String langFile) {
+    protected @Nullable JsonObject getLangData(String langFile) {
         if (langDataCache.containsKey(langFile)) return langDataCache.get(langFile);
 
         final String langPath = "/assets/" + this.modId + "/lang/" + langFile + ".json";
@@ -65,7 +66,9 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
             ).getAsJsonObject();
             langDataCache.put(langFile, langData);
             return langData;
-        } else throw new RuntimeException("Failed to load lang data from " + langPath);
+        } else LOGGER.error("Failed to load lang data from '{}'", langPath);
+
+        return null;
     }
 
     public void injectComments() throws SerializationException {
@@ -105,29 +108,33 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
                 final ConfigExtension.File.AutoComment autoComment = tryGetAnnotation(field, ConfigExtension.File.AutoComment.class);
                 if (autoComment != null) {
                     final JsonObject langData = getLangData(autoComment.langFile());
-                    Type genericType = field.getGenericType();
+                    final Type genericType = field.getGenericType();
 
-                    if (
-                            genericType instanceof ParameterizedType pType &&
-                            pType.getActualTypeArguments()[0] instanceof Class<?> keyClass &&
-                            keyClass.isEnum()
-                    ) {
+                    if (langData != null) {
+                        if (
+                                genericType instanceof ParameterizedType pType &&
+                                        pType.getActualTypeArguments()[0] instanceof Class<?> keyClass &&
+                                        keyClass.isEnum()
+                        ) {
 
-                        for (Object enumObj : keyClass.getEnumConstants()) {
-                            Enum<?> enumVal = (Enum<?>) enumObj;  // TODO: Switch from enum to generic, or add boolean support
-                            List<String> keyPath = new ArrayList<>(currentPath);
-                            keyPath.add(enumVal.name()); // TOML uses the raw enum name
-                            // TODO: How will it add the tooltips to the keys instead of the main map?
+                            for (Object enumObj : keyClass.getEnumConstants()) {
+                                Enum<?> enumVal = (Enum<?>) enumObj;  // TODO: Switch from enum to generic, or add boolean support
+                                List<String> keyPath = new ArrayList<>(currentPath);
+                                keyPath.add(enumVal.name()); // TOML uses the raw enum name
+                                // TODO: How will it add the tooltips to the keys instead of the main map?
 
-                            // Replicate the exact baseKey from ProviderRegistry
-                            String customBaseKey = "text.autoconfig." + this.definition.name() + ".option." +
-                                    String.join(".", currentPath) + "." + enumVal.name().toLowerCase();
+                                // Replicate the exact baseKey from ProviderRegistry
+                                String customBaseKey = "text.autoconfig." + this.definition.name() + ".option." +
+                                        String.join(".", currentPath) + "." + enumVal.name().toLowerCase();
 
-                            String resolved = resolveCommentFromLangFile(field, keyPath, langData, customBaseKey);
-                            if (!resolved.isEmpty()) {
-                                toml.setComment(keyPath, resolved);
+                                String resolved = resolveCommentFromLangFile(field, keyPath, langData, customBaseKey);
+                                if (!resolved.isEmpty()) {
+                                    toml.setComment(keyPath, resolved);
+                                }
                             }
                         }
+                    } else {
+                        LOGGER.error("Field '{}' won't have any comments cause 'langData' is NULL", field.getName());
                     }
                 }
             } else {
@@ -144,7 +151,7 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
         }
     }
 
-    protected String tryResolveComment(Field field, List<String> currentPath) {
+    protected @Nullable String tryResolveComment(Field field, List<String> currentPath) {
         if (field.isAnnotationPresent(ConfigExtension.File.Comment.class)) {
             return field.getAnnotation(ConfigExtension.File.Comment.class).comment();
         }
@@ -154,7 +161,12 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
         final ConfigExtension.File.AutoComment autoComment = tryGetAnnotation(field, ConfigExtension.File.AutoComment.class);
         if (autoComment != null) {
             final JsonObject langData = getLangData(autoComment.langFile());
-            return resolveCommentFromLangFile(field, currentPath, langData, autoComment.translationsString());
+            if (langData != null) {
+                return resolveCommentFromLangFile(field, currentPath, langData, autoComment.translationsString());
+            } else {
+                LOGGER.error("Field '{}' won't have any comments cause 'langData' is NULL", field.getName());
+                return "";
+            }
         }
 
         return null;
