@@ -24,16 +24,14 @@ public class ModConfig implements ConfigData {
     public long testLongLimited = -128;
     @ConfigExtension.Gui.FloatLimit(min = -63.4f, max = 63.4f)
     public float testFloatLimited = 0.4f;
-    @ConfigExtension.Gui.DoubleLimit(min = -1.0, max = -0.9f)
+    @ConfigExtension.Gui.DoubleLimit(max = -0.9d)
+    public float testDoubleLimited = -1;
 
     @ConfigExtension.File.AutoComment(langFile = "en_gb")
     public String testString = "testString";
 
     @ConfigExtension.File.AutoComment(translationsString = "this.is.custom.string")
     public TestEnum testEnumString = TestEnum.THIS;
-
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public TestEnum testEnumButton = TestEnum.THIS;
 
     @ConfigExtension.Gui.SkipGlobalTooltip
     public Map<TestSettings, Boolean> testEnumBooleanMap = getTestBooleanMap();
