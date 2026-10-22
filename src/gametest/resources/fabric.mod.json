@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "cloth-config-extensions-test",
+	"id": "cloth-config-extensions-tests",
 	"version": "1.0.0",
 	"name": "Cloth Config Extensions - Tests",
 	"environment": "*",
