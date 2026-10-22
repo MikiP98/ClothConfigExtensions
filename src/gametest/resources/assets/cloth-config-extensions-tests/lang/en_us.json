@@ -1,0 +1,19 @@
+{
+	"text.autoconfig.TestConfig.title": "This is a test config screen",
+
+	"text.autoconfig.TestConfig.option.testIntLimited": "Test Int Limited",
+	"text.autoconfig.TestConfig.option.testIntLimited.@Tooltip": "Tooltip for Test Int Limited '>= 0'",
+	"text.autoconfig.TestConfig.option.testLongLimited": "Test Long Limited",
+	"text.autoconfig.TestConfig.option.testLongLimited.@Tooltip": "Tooltip for Test Long Limited '<= 0'",
+	"text.autoconfig.TestConfig.option.testFloatLimited": "Test Int Limited",
+	"text.autoconfig.TestConfig.option.testFloatLimited.@Tooltip": "Tooltip for Test Int Limited '[-63.4f, 63.4f]'",
+	"text.autoconfig.TestConfig.option.testDoubleLimited": "Test Int Limited",
+	"text.autoconfig.TestConfig.option.testDoubleLimited.@Tooltip": "Tooltip for Test Int Limited '<= -0.9d'",
+
+	"text.autoconfig.TestConfig.option.testString": "Test String",
+	"text.autoconfig.TestConfig.option.testString.@Tooltip": "This tooltip came from 'en_us' lang file",
+
+	"text.autoconfig.TestConfig.option.testEnumString": "Test Enum String",
+	"text.autoconfig.TestConfig.option.testEnumString.@Tooltip": "This tooltip came from default translation string",
+	"this.is.custom.string": "This comment came from custom translation string"
+}
