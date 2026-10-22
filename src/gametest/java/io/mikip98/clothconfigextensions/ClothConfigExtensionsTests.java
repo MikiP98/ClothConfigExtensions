@@ -18,7 +18,7 @@ public class ClothConfigExtensionsTests implements ModInitializer, ClientModInit
     @Override
     public void onInitialize() {
         LOGGER.info("Cloth Config Extensions Tests are being initialized!");
-        AutoConfig.register(ModConfig.class, CommentedTomlSerializer::new);
+        AutoConfig.register(ModConfig.class, (var1, var2) -> new CommentedTomlSerializer<>(var1, var2, MOD_ID));
         ModConfig.INSTANCE = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
     }
 
