@@ -196,6 +196,8 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
         } else {
             baseKey = customKey;
         }
+        // TODO: Should custom translation sting always include '.@Tooltip'?
+        //       Or maybe '.@Comment'?
 
         int tooltipCount = 1;
 
@@ -220,6 +222,7 @@ public class CommentedTomlSerializer<T extends ConfigData> extends Toml4jConfigS
         } else {
             // Multi-line tooltip array (@Tooltip[0], @Tooltip[1], etc.)
             final StringJoiner tooltip = new StringJoiner("\n");
+            // TODO: Replace with for-loop of 'tooltipCount'
             int i = 0;
             while (lang.has(baseKey + ".@Tooltip[" + i + "]")) {
                 tooltip.add(lang.get(baseKey + ".@Tooltip[" + i + "]").getAsString());
